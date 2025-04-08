@@ -100,7 +100,7 @@ const Footer = () => {
             <FooterHeading>Platform</FooterHeading>
             <FooterLink to="/marketplace">Marketplace</FooterLink>
             <FooterLink to="/dashboard">Dashboard</FooterLink>
-            <FooterLink to="/about">About</FooterLink>
+            <FooterLink to="/about">About Us</FooterLink>
           </FooterColumn>
 
           <FooterColumn>
