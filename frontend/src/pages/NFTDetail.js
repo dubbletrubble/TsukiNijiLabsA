@@ -100,7 +100,6 @@ const NFTDetail = () => {
     currentBid: initialNFTData.currentBid ? parseEther(initialNFTData.currentBid) : 0n,
     timeRemaining: initialNFTData.timeRemaining
   } : null);
-  const [owner] = useState(null);
   const [bidAmount, setBidAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [revenueInfo, setRevenueInfo] = useState(null);
@@ -153,7 +152,7 @@ const NFTDetail = () => {
 
   useEffect(() => {
     loadNFTData();
-  }, [tokenId, address, loadNFTData]);
+  }, [tokenId, loadNFTData]);
 
   /**
    * Handles the NFT purchase process
@@ -192,14 +191,17 @@ const NFTDetail = () => {
 
   const handleBid = useCallback(async (bidAmount) => {
     try {
+      setIsSubmitting(true);
       await placeBid({
         args: [tokenId, parseEther(bidAmount)]
       });
       console.log('Bid placed successfully');
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [placeBid, tokenId, parseEther]);
+  }, [placeBid, tokenId, setIsSubmitting]);
 
   const handleCancel = useCallback(async () => {
     await cancelListing({

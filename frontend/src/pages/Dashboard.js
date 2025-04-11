@@ -105,18 +105,17 @@ const Dashboard = () => {
       console.error('Error claiming revenue:', error);
       addAlert('error', 'Failed to claim revenue. Please try again.');
     }
-  }, [claim, ownedNFTs, fetchNFTs]);
+  }, [claim, ownedNFTs, fetchNFTs, addAlert]);
 
-  // Alert management
-  const addAlert = (type, message) => {
-    const id = Date.now();
-    setAlerts(prev => [...prev, { id, type, message }]);
-    setTimeout(() => removeAlert(id), 5000);
-  };
-
-  const removeAlert = (id) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== id));
-  };
+  // Handle revenue withdrawal
+  const handleWithdraw = useCallback(async () => {
+    try {
+      const result = await withdrawRevenue();
+      addAlert('success', 'Successfully withdrew revenue');
+    } catch (error) {
+      addAlert('error', error.message);
+    }
+  }, [withdrawRevenue, addAlert]);
 
   // Initial data fetch
   useEffect(() => {
