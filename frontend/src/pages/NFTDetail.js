@@ -260,14 +260,14 @@ const NFTDetail = () => {
               lastPayout={revenueInfo?.lastPayout}
               nextPayout={revenueInfo?.nextPayout}
               availableRevenue={revenueInfo?.availableRevenue}
-              isOwner={owner === address}
+              isOwner={currentOwner === address}
               onClaim={handleClaim}
             />
           </SideContent>
         </DetailContainer>
       </Container>
     );
-  }, [metadata, listing, owner, address, revenueInfo, bidAmount, handleBuy, handleBid, handleClaim]);
+  }, [metadata, listing, currentOwner, address, revenueInfo, bidAmount, handleBuy, handleBid, handleClaim]);
 
   return (
     <DetailPageContainer>

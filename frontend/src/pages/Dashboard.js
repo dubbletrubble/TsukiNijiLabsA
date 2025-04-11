@@ -48,6 +48,10 @@ const Dashboard = () => {
     }, 5000);
   }, []);
 
+  const removeAlert = useCallback((id) => {
+    setAlerts(prev => prev.filter(alert => alert.id !== id));
+  }, []);
+
   // Fetch owned NFTs and their metadata
   const fetchNFTs = useCallback(async () => {
     if (!address) return;
