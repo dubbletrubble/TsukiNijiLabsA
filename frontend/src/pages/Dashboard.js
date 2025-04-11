@@ -20,12 +20,18 @@ import {
 
 const Dashboard = () => {
   const { address } = useAccount();
-  const { data: balance } = useBalance({
+  const { data: ethBalance } = useBalance({
     address: address,
+    token: contractAddresses.ETH
+  });
+  const { data: tskjBalance } = useBalance({
+    address: address,
+    token: contractAddresses.PlatformToken
   });
 
   const { getOwnedNFTs, getMetadata, getListing, getRevenueAvailable } = useNFTContract();
-  const { claimRevenue, withdrawRevenue } = useRevenueRouter();
+  const { claim, withdrawRevenue } = useRevenueRouter();
+  const { getExchangeRate } = usePlatformToken();
 
   const [ownedNFTs, setOwnedNFTs] = useState([]);
   const [totalRevenue] = useState(0n);
@@ -115,7 +121,7 @@ const Dashboard = () => {
       const result = await withdrawRevenue();
       addAlert('success', 'Successfully withdrew revenue');
     } catch (error) {
-      addAlert('error', error.message);
+      addAlert('error', error?.message || 'An error occurred');
     }
   }, [withdrawRevenue, addAlert]);
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useAccount } from 'wagmi';
 import { parseEther } from 'viem';
-import { Container } from '../components/common/StyledComponents';
+import { Container, Button } from '../components/common/StyledComponents';
 import { theme } from '../styles/theme';
 import { useNFTContract, useMarketplace, usePlatformToken } from '../hooks/useNFTContract';
 import { useRevenueRouter } from '../hooks/useRevenueRouter';
@@ -241,10 +241,9 @@ const NFTDetail = () => {
               industry={nftData.industry}
               description={nftData.description}
             />
-            {currentOwner === address && (
+            {currentOwner === address ? (
               <Button onClick={handleClaim}>Claim Revenue</Button>
-            )}
-            {currentOwner !== address && listing && (
+            ) : listing && (
               <BuyPanel
                 price={listing.price}
                 onBuy={handleBuy}
