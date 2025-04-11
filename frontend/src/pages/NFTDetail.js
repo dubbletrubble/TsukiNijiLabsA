@@ -197,7 +197,7 @@ const NFTDetail = () => {
     }
   }, [approve, buyNFT, listing?.price, tokenId, navigate]);
 
-  const [bidAmount, setBidAmount] = useState('');
+  const [, setBidAmount] = useState('');
 
   const handleBid = useCallback(async (bidAmount) => {
     try {
@@ -263,7 +263,7 @@ const NFTDetail = () => {
         </DetailContainer>
       </Container>
     );
-  }, [metadata, listing, currentOwner, address, revenueInfo, handleBuy, handleBid, handleClaim, nftData]);
+  }, [metadata, listing, currentOwner, address, revenueInfo, handleBuy, handleBid, handleClaim, nftData, initialNFTData]);
 
   return (
     <DetailPageContainer>
