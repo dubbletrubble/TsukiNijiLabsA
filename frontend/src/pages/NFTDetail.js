@@ -104,6 +104,7 @@ const NFTDetail = () => {
   const [bidAmount, setBidAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [revenueInfo, setRevenueInfo] = useState(null);
 
   const nftData = useMemo(() => {
     return {
@@ -215,11 +216,8 @@ const NFTDetail = () => {
       args: [tokenId]
     });
     
-    const newRevenueInfo = await getRevenueInfo({
-      address: contractAddresses.Marketplace,
-      args: [tokenId]
-    });
-    // setRevenueInfo(newRevenueInfo);
+    const newRevenueInfo = await getRevenueInfo();
+    setRevenueInfo(newRevenueInfo);
   }, [claim, getRevenueInfo, tokenId]);
 
   // Render content
