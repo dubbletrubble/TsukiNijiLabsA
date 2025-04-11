@@ -1,4 +1,7 @@
 import '@testing-library/jest-dom';
+
+// Add BigInt to global for tests
+global.BigInt = require('big-integer');
 import { ethers } from 'ethers';
 
 // Mock ethers

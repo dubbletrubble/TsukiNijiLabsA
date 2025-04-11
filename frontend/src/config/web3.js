@@ -1,5 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { infuraProvider } from 'wagmi/providers/infura';

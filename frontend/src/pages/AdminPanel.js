@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import CompanyNFTABI from '../abis/CompanyNFTABI.json';
+import MarketplaceABI from '../abis/MarketplaceABI.json';
 import { useAccount } from 'wagmi';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';

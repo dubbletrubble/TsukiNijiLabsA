@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { contractAddresses } from '../../config/web3';
 import styled from '@emotion/styled';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAccount } from 'wagmi';
