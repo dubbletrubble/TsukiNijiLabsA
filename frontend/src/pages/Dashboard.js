@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { formatEther } from 'viem';
 import { AnimatePresence } from 'framer-motion';
-import { useNFTContract, useMarketplace, usePlatformToken } from '../hooks/useNFTContract';
+import { useNFTContract, usePlatformToken } from '../hooks/useNFTContract';
 import { useRevenueRouter } from '../hooks/useRevenueRouter';
-import { contractAddresses } from '../config/web3';
+import { Container, Grid, Button } from '../components/common/StyledComponents';
 import DashboardNFTCard from '../components/dashboard/DashboardNFTCard';
 import TokenConversionPanel from '../components/dashboard/TokenConversionPanel';
 import ActivityList from '../components/dashboard/ActivityList';
@@ -120,14 +120,7 @@ const Dashboard = () => {
   }, [claim, ownedNFTs, fetchNFTs, addAlert]);
 
   // Handle revenue withdrawal
-  const handleWithdraw = useCallback(async () => {
-    try {
-      const result = await withdrawRevenue();
-      addAlert('success', 'Successfully withdrew revenue');
-    } catch (error) {
-      addAlert('error', error?.message || 'An error occurred');
-    }
-  }, [withdrawRevenue, addAlert]);
+
 
   // Initial data fetch
   useEffect(() => {

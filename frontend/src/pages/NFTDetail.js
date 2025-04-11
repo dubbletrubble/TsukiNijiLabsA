@@ -106,9 +106,16 @@ const NFTDetail = () => {
   const [currentOwner, setCurrentOwner] = useState(null);
 
   const nftData = useMemo(() => {
-    return {
+    const data = {
       ...initialNFTData,
       metadata: metadata || {}
+    };
+    return {
+      ...data,
+      description: data.metadata?.description || data.description,
+      image: data.metadata?.image || data.image,
+      industry: data.metadata?.industry || data.industry,
+      name: data.metadata?.name || data.name
     };
   }, [metadata, initialNFTData]);
 
@@ -158,7 +165,7 @@ const NFTDetail = () => {
 
   useEffect(() => {
     loadNFTData();
-  }, [tokenId, loadNFTData]);
+  }, [loadNFTData]);
 
   /**
    * Handles the NFT purchase process
@@ -201,13 +208,14 @@ const NFTDetail = () => {
       await placeBid({
         args: [tokenId, parseEther(bidAmount)]
       });
+      setBidAmount('');
       console.log('Bid placed successfully');
     } catch (error) {
       console.error(error);
     } finally {
       setIsSubmitting(false);
     }
-  }, [placeBid, tokenId, setIsSubmitting]);
+  }, [placeBid, tokenId, setIsSubmitting, setBidAmount]);
 
   const handleCancel = useCallback(async () => {
     await cancelListing({
