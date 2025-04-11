@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { GlassCard, Container, Heading, Text, Button, Grid } from '../common/StyledComponents';
 import { theme } from '../../styles/theme';
 
@@ -60,6 +61,7 @@ const CategoryBadge = styled.span`
 `;
 
 const MarketplacePreview = () => {
+  const navigate = useNavigate();
   const nfts = [
     {
       name: "AI Solutions Corp",
@@ -167,7 +169,14 @@ const MarketplacePreview = () => {
             marginTop: theme.spacing.xl 
           }}
         >
-          <Button variant="primary">
+          <Button
+            variant="primary"
+            as={motion.button}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95, y: 0 }}
+            onClick={() => navigate('/marketplace')}
+            style={{ position: 'relative' }}
+          >
             View All Listings
           </Button>
         </motion.div>

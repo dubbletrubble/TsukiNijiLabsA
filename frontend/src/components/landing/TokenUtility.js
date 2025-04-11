@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Container, Heading, Text, Button, GlassCard, Grid } from '../common/StyledComponents';
 import { theme } from '../../styles/theme';
+import { contractAddresses } from '../../config/web3';
 
 const Section = styled.section`
   padding: ${theme.spacing.xl} 0;
@@ -64,6 +66,26 @@ const ExchangeRate = styled(GlassCard)`
 `;
 
 const TokenUtility = () => {
+  const navigate = useNavigate();
+  
+  // Function to handle ETH to TSKJ conversion
+  const handleConversion = () => {
+    navigate('/convert', { 
+      state: { 
+        fromToken: 'ETH',
+        toToken: 'TSKJ',
+        rate: 2000
+      }
+    });
+  };
+
+  // Function to open Uniswap in a new tab
+  const openUniswap = () => {
+    // Using Uniswap v3 URL format with your token address
+    const uniswapUrl = `https://app.uniswap.org/#/swap?outputCurrency=${contractAddresses.PlatformToken}`;
+    window.open(uniswapUrl, '_blank');
+  };
+
   const utilities = [
     {
       icon: "💰",
@@ -160,10 +182,23 @@ const TokenUtility = () => {
           <Text style={{ fontSize: "1.25rem" }}>
             1 ETH = 2,000 TSKJ
           </Text>
-          <Button variant="primary">
+          <Button
+            variant="primary"
+            as={motion.button}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95, y: 0 }}
+            onClick={handleConversion}
+            style={{ position: 'relative' }}
+          >
             Convert ETH to TSKJ
           </Button>
-          <Button>
+          <Button
+            as={motion.button}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95, y: 0 }}
+            onClick={openUniswap}
+            style={{ position: 'relative' }}
+          >
             Trade on Uniswap
           </Button>
         </ExchangeRate>

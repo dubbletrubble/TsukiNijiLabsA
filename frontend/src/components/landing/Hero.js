@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Heading, Text, Flex } from '../common/StyledComponents';
 import { theme } from '../../styles/theme';
 
@@ -48,6 +49,7 @@ const StatValue = styled(Text)`
 `;
 
 const Hero = () => {
+  const navigate = useNavigate();
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -85,10 +87,23 @@ const Hero = () => {
           </Text>
 
           <Flex gap={theme.spacing.md}>
-            <Button variant="primary" as={motion.button} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="primary"
+              as={motion.button}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95, y: 0 }}
+              onClick={() => navigate('/connect-wallet')}
+              style={{ position: 'relative' }}
+            >
               Connect Wallet
             </Button>
-            <Button as={motion.button} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              as={motion.button}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95, y: 0 }}
+              onClick={() => navigate('/marketplace')}
+              style={{ position: 'relative' }}
+            >
               Explore Marketplace
             </Button>
           </Flex>

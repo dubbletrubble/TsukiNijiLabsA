@@ -105,9 +105,9 @@ const Footer = () => {
 
           <FooterColumn>
             <FooterHeading>Resources</FooterHeading>
-            <FooterLink href="/docs">Documentation</FooterLink>
-            <FooterLink href="/faq">FAQ</FooterLink>
-            <FooterLink href="/support">Support</FooterLink>
+            <FooterLink to="/docs">Documentation</FooterLink>
+            <FooterLink to="/faq">FAQ</FooterLink>
+            <FooterLink to="/support">Support</FooterLink>
           </FooterColumn>
 
           <FooterColumn>

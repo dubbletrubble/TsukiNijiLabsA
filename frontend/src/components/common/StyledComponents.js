@@ -11,7 +11,7 @@ export const GlassCard = styled(motion.div)`
   padding: ${theme.spacing.lg};
 `;
 
-export const Button = styled(motion.button)`
+export const Button = styled.button`
   background: ${props => props.variant === 'primary' 
     ? theme.colors.gradient.rainbow
     : theme.colors.background.glass};
@@ -21,10 +21,27 @@ export const Button = styled(motion.button)`
   font-weight: 600;
   transition: ${theme.transitions.default};
   border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${theme.shadows.hover};
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
@@ -95,5 +112,26 @@ export const Flex = styled.div`
   
   @media (max-width: ${theme.breakpoints.md}) {
     flex-direction: ${props => props.mobileDirection || props.direction || 'row'};
+  }
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: ${theme.spacing.md};
+  background: ${theme.colors.background.secondary};
+  border: 1px solid ${theme.colors.border};
+  border-radius: ${theme.borderRadius.md};
+  color: ${theme.colors.text.primary};
+  font-size: 1rem;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: ${theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(83, 92, 236, 0.2);
+  }
+
+  &::placeholder {
+    color: ${theme.colors.text.secondary};
   }
 `;
