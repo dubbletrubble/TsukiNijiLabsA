@@ -5,7 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useNFTContract, usePlatformToken } from '../hooks/useNFTContract';
 import { useRevenueRouter } from '../hooks/useRevenueRouter';
 import { contractAddresses } from '../config/web3';
-import { Container, Grid, Button } from '../components/common/StyledComponents';
+
 import DashboardNFTCard from '../components/dashboard/DashboardNFTCard';
 import TokenConversionPanel from '../components/dashboard/TokenConversionPanel';
 import ActivityList from '../components/dashboard/ActivityList';
@@ -31,7 +31,7 @@ const Dashboard = () => {
   });
 
   const { getOwnedNFTs, getMetadata, getListing, getRevenueAvailable } = useNFTContract();
-  const { claim, withdrawRevenue } = useRevenueRouter();
+  const { claim } = useRevenueRouter();
   const { getExchangeRate } = usePlatformToken();
 
   const [ownedNFTs, setOwnedNFTs] = useState([]);

@@ -215,7 +215,7 @@ const NFTDetail = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [placeBid, tokenId, setIsSubmitting, setBidAmount]);
+  }, [placeBid, tokenId, setBidAmount]);
 
   const handleCancel = useCallback(async () => {
     await cancelListing({
