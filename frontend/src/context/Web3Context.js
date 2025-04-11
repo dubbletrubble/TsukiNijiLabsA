@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import { useAccount, useNetwork, usePublicClient, useWalletClient } from 'wagmi';
 
 // Import contract ABIs
 import { CompanyNFTABI } from '../abis/CompanyNFTABI.js';
@@ -13,35 +13,35 @@ const Web3Context = createContext();
 export function Web3Provider({ children }) {
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const provider = useProvider();
-  const { data: signer } = useSigner();
+  const provider = usePublicClient();
+  const { data: walletClient } = useWalletClient();
   const [contracts, setContracts] = useState({});
 
   useEffect(() => {
-    if (signer && address) {
+    if (walletClient && address) {
       // Initialize contracts
       const companyNFT = new ethers.Contract(
         process.env.REACT_APP_COMPANY_NFT_ADDRESS,
         CompanyNFTABI.abi,
-        signer
+        walletClient
       );
 
       const marketplace = new ethers.Contract(
         process.env.REACT_APP_MARKETPLACE_ADDRESS,
         MarketplaceABI.abi,
-        signer
+        walletClient
       );
 
       const platformToken = new ethers.Contract(
         process.env.REACT_APP_PLATFORM_TOKEN_ADDRESS,
         PlatformTokenABI.abi,
-        signer
+        walletClient
       );
 
       const revenueRouter = new ethers.Contract(
         process.env.REACT_APP_REVENUE_ROUTER_ADDRESS,
         RevenueRouterABI.abi,
-        signer
+        walletClient
       );
 
       setContracts({
@@ -53,7 +53,7 @@ export function Web3Provider({ children }) {
     } else {
       setContracts({});
     }
-  }, [signer, address]);
+  }, [walletClient, address]);
 
   return (
     <Web3Context.Provider
@@ -62,7 +62,7 @@ export function Web3Provider({ children }) {
         provider,
         contracts,
         chainId: chain?.id,
-        signer
+        walletClient
       }}
     >
       {children}
