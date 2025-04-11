@@ -4,6 +4,7 @@ import { formatEther } from 'viem';
 import { AnimatePresence } from 'framer-motion';
 import { useNFTContract, usePlatformToken } from '../hooks/useNFTContract';
 import { useRevenueRouter } from '../hooks/useRevenueRouter';
+import { contractAddresses } from '../config/web3';
 import { Container, Grid, Button } from '../components/common/StyledComponents';
 import DashboardNFTCard from '../components/dashboard/DashboardNFTCard';
 import TokenConversionPanel from '../components/dashboard/TokenConversionPanel';
