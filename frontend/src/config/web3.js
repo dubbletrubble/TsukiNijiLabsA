@@ -1,7 +1,8 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { mainnet, sepolia } from 'viem/chains';
-import { http } from 'viem';
+import { http, createConfig } from 'viem';
+import { infuraProvider } from '@wagmi/core/providers/infura';
 
 // Network configuration with fallback to Sepolia testnet
 const NETWORK = process.env.REACT_APP_NETWORK || 'sepolia';
@@ -12,12 +13,14 @@ const DEFAULT_PROJECT_ID = '00000000000000000000000000000000';
 const projectId = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || DEFAULT_PROJECT_ID;
 
 // Configure wagmi client with RainbowKit
+const infuraId = process.env.REACT_APP_INFURA_ID || '5b348ac26e3143738765417436a14224';
+
 const wagmiConfig = getDefaultConfig({
   appName: 'Tsuki Niji Labs NFT Platform',
   projectId,
   chains: [selectedChain],
   transports: {
-    [selectedChain.id]: http()
+    [selectedChain.id]: http(`https://${NETWORK}.infura.io/v3/${infuraId}`)
   }
 });
 
