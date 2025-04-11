@@ -29,28 +29,32 @@ export const useNFTContract = () => {
     functionName: 'totalSupply'
   });
 
+  const { data: tokenURI } = useContractRead({
+    address: contractAddresses.CompanyNFT,
+    abi: CompanyNFTABI,
+    functionName: 'tokenURI',
+    args: [tokenId],
+    enabled: Boolean(tokenId)
+  });
+
   const getNFTMetadata = async (tokenId) => {
-    const data = await useContractRead({
-      address: contractAddresses.CompanyNFT,
-      abi: CompanyNFTABI,
-      functionName: 'tokenURI',
-      args: [tokenId]
-    });
-    
-    if (data) {
-      const response = await fetch(data);
-      return response.json();
-    }
-    return null;
+    if (!tokenURI) return null;
+    // Fetch and parse metadata from IPFS or other storage
+    const response = await fetch(tokenURI);
+    const metadata = await response.json();
+    return metadata;
   };
 
+  const { data: owner } = useContractRead({
+    address: contractAddresses.CompanyNFT,
+    abi: CompanyNFTABI,
+    functionName: 'ownerOf',
+    args: [tokenId],
+    enabled: Boolean(tokenId)
+  });
+
   const getNFTOwner = async (tokenId) => {
-    return await useContractRead({
-      address: contractAddresses.CompanyNFT,
-      abi: CompanyNFTABI,
-      functionName: 'ownerOf',
-      args: [tokenId]
-    });
+    return owner;
   };
 
   return {
@@ -71,13 +75,16 @@ export const useNFTContract = () => {
  * @property {Function} cancelListing - Cancel an active listing
  */
 export const useMarketplace = () => {
+  const { data: listing } = useContractRead({
+    address: contractAddresses.Marketplace,
+    abi: MarketplaceABI,
+    functionName: 'getListing',
+    args: [tokenId],
+    enabled: Boolean(tokenId)
+  });
+
   const getListing = async (tokenId) => {
-    return await useContractRead({
-      address: contractAddresses.Marketplace,
-      abi: MarketplaceABI,
-      functionName: 'getListing',
-      args: [tokenId]
-    });
+    return listing;
   };
 
   const { writeContract } = useContractWrite();
@@ -165,13 +172,16 @@ export const useMarketplace = () => {
  * @property {Function} approve - Approve token spending for marketplace
  */
 export const usePlatformToken = () => {
+  const { data: balance } = useContractRead({
+    address: contractAddresses.PlatformToken,
+    abi: PlatformTokenABI,
+    functionName: 'balanceOf',
+    args: [address],
+    enabled: Boolean(address)
+  });
+
   const getBalance = async (address) => {
-    return await useContractRead({
-      address: contractAddresses.PlatformToken,
-      abi: PlatformTokenABI,
-      functionName: 'balanceOf',
-      args: [address]
-    });
+    return balance;
   };
 
   const { writeContract } = useContractWrite();
@@ -185,13 +195,16 @@ export const usePlatformToken = () => {
     });
   };
 
+  const { data: allowance } = useContractRead({
+    address: contractAddresses.PlatformToken,
+    abi: PlatformTokenABI,
+    functionName: 'allowance',
+    args: [owner, spender],
+    enabled: Boolean(owner && spender)
+  });
+
   const checkAllowance = async (owner, spender) => {
-    return await useContractRead({
-      address: contractAddresses.PlatformToken,
-      abi: PlatformTokenABI,
-      functionName: 'allowance',
-      args: [owner, spender]
-    });
+    return allowance;
   };
 
   return {
