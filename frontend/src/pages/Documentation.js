@@ -12,6 +12,7 @@ const DocContainer = styled.div`
   margin: 0 auto;
   padding: ${theme.spacing.xl};
   min-height: calc(100vh - 80px);
+  position: relative;
 
   @media (max-width: ${theme.breakpoints.lg}) {
     grid-template-columns: 1fr;
@@ -19,35 +20,93 @@ const DocContainer = styled.div`
   }
 `;
 
+const SidebarWrapper = styled.div`
+  position: relative;
+  width: 280px;
+  transition: width 0.3s ease;
+
+  &:hover {
+    width: 320px;
+  }
+
+  @media (max-width: ${theme.breakpoints.lg}) {
+    display: none;
+  }
+`;
+
 const Sidebar = styled(motion.aside)`
-  position: sticky;
-  top: ${theme.spacing.xl};
-  height: calc(100vh - 160px);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: inherit;
   overflow-y: auto;
-  padding-right: ${theme.spacing.md};
+  padding: ${theme.spacing.lg};
+  margin: ${theme.spacing.xl} 0;
+  background: ${theme.colors.background.secondary};
+  border-radius: ${theme.borderRadius.lg};
+  border: 1px solid ${theme.colors.border};
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: ${theme.shadows.lg};
+  }
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${theme.colors.border};
+    border-radius: 4px;
+  }
+`;
+
+const MobileSidebar = styled(motion.aside)`
+  display: none;
   
   @media (max-width: ${theme.breakpoints.lg}) {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     width: 280px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: ${theme.spacing.lg};
     background: ${theme.colors.background.primary};
+    border-radius: 0;
     z-index: 1000;
     transform: translateX(\${props => props.isOpen ? '0' : '-100%'});
     transition: transform 0.3s ease;
-    padding: ${theme.spacing.xl};
   }
 `;
 
 const MainContent = styled.main`
   max-width: 900px;
+  padding: ${theme.spacing.lg};
+  background: ${theme.colors.background.secondary};
+  border-radius: ${theme.borderRadius.lg};
+  border: 1px solid ${theme.colors.border};
+  backdrop-filter: blur(8px);
 `;
 
 const NavList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 const NavItem = styled.li`
@@ -59,12 +118,15 @@ const NavLink = styled.a`
   text-decoration: none;
   font-size: 0.9rem;
   display: block;
-  padding: ${theme.spacing.xs} 0;
-  transition: color 0.2s ease;
+  padding: ${theme.spacing.xs} ${theme.spacing.sm};
+  transition: all 0.2s ease;
   cursor: pointer;
+  border-radius: ${theme.borderRadius.sm};
 
   &:hover {
     color: ${theme.colors.primary};
+    background: rgba(83, 92, 236, 0.1);
+    transform: translateX(4px);
   }
 `;
 
@@ -96,6 +158,17 @@ const MobileMenuButton = styled.button`
   z-index: 1001;
   cursor: pointer;
   box-shadow: ${theme.shadows.lg};
+  color: white;
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   @media (max-width: ${theme.breakpoints.lg}) {
     display: flex;
@@ -115,11 +188,22 @@ const SearchContainer = styled.div`
     top: 50%;
     transform: translateY(-50%);
     opacity: 0.5;
+    pointer-events: none;
+    z-index: 1;
   }
 `;
 
 const SearchInput = styled(Input)`
   padding-left: 2.5rem;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &:focus {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: ${theme.colors.primary};
+  }
 `;
 
 const Documentation = () => {
@@ -197,7 +281,44 @@ const Documentation = () => {
 
   return (
     <DocContainer>
-      <Sidebar isOpen={isMenuOpen}>
+      <SidebarWrapper>
+        <Sidebar>
+          <SearchContainer>
+            <SearchInput
+              type="text"
+              placeholder="Search documentation..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </SearchContainer>
+          <NavList>
+            {filteredSections.map(([key, section]) => (
+              <NavItem key={key}>
+                <NavLink
+                  href={`#${key}`}
+                  active={activeSection === key}
+                >
+                  {section.title}
+                </NavLink>
+                <SubNavList>
+                  {section.subsections.map((subsection, index) => (
+                    <NavItem key={`${key}-${index}`}>
+                      <NavLink
+                        href={`#${key}-${index}`}
+                        active={activeSection === `${key}-${index}`}
+                      >
+                        {subsection}
+                      </NavLink>
+                    </NavItem>
+                  ))}
+                </SubNavList>
+              </NavItem>
+            ))}
+          </NavList>
+        </Sidebar>
+      </SidebarWrapper>
+
+      <MobileSidebar isOpen={isMenuOpen}>
         <SearchContainer>
           <SearchInput
             type="text"
@@ -232,7 +353,7 @@ const Documentation = () => {
             </NavItem>
           ))}
         </NavList>
-      </Sidebar>
+      </MobileSidebar>
 
       <MainContent>
         <motion.div
