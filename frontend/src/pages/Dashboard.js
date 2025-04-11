@@ -20,25 +20,27 @@ import {
 
 const Dashboard = () => {
   const { address } = useAccount();
-  const { data: ethBalance } = useBalance({ address });
-  const { data: tskjBalance } = useBalance({ 
-    address,
-    token: contractAddresses.PlatformToken 
+  const { data: balance } = useBalance({
+    address: address,
   });
 
-  // Contract hooks
-  const { getOwnedNFTs, getMetadata } = useNFTContract();
-  const { getListing } = useMarketplace();
-  const { getRevenueAvailable, claim } = useRevenueRouter();
-  const { getExchangeRate } = usePlatformToken();
+  const { getOwnedNFTs, getMetadata, getListing, getRevenueAvailable } = useNFTContract();
+  const { claimRevenue, withdrawRevenue } = useRevenueRouter();
 
-  // State
   const [ownedNFTs, setOwnedNFTs] = useState([]);
-  const [totalRevenue] = useState(0);
+  const [totalRevenue] = useState(0n);
   const [pendingRevenue, setPendingRevenue] = useState(0n);
   const [exchangeRate, setExchangeRate] = useState(0);
   const [activities, setActivities] = useState([]);
   const [alerts, setAlerts] = useState([]);
+
+  const addAlert = useCallback((type, message) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setAlerts(prev => [...prev, { id, type, message }]);
+    setTimeout(() => {
+      setAlerts(prev => prev.filter(alert => alert.id !== id));
+    }, 5000);
+  }, []);
 
   // Fetch owned NFTs and their metadata
   const fetchNFTs = useCallback(async () => {

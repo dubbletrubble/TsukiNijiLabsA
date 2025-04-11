@@ -103,6 +103,7 @@ const NFTDetail = () => {
   const [bidAmount, setBidAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [revenueInfo, setRevenueInfo] = useState(null);
+  const [currentOwner, setCurrentOwner] = useState(null);
 
   const nftData = useMemo(() => {
     return {
@@ -136,10 +137,11 @@ const NFTDetail = () => {
     }
 
     // Otherwise load from blockchain
-    const [metadataResult, listingResult] = await Promise.all([
+    const [metadataResult, listingResult, ownerResult] = await Promise.all([
       getNFTMetadata({ address: contractAddresses.CompanyNFT, args: [tokenId] }),
-      getListing({ address: contractAddresses.Marketplace, args: [tokenId] })
-    ]).catch(() => [null, null]);
+      getListing({ address: contractAddresses.Marketplace, args: [tokenId] }),
+      getNFTOwner({ address: contractAddresses.CompanyNFT, args: [tokenId] })
+    ]).catch(() => [null, null, null]);
 
     if (metadataResult) {
       setMetadata(metadataResult);
@@ -148,7 +150,11 @@ const NFTDetail = () => {
     if (listingResult) {
       setListing(listingResult);
     }
-  }, [tokenId, initialNFTData, getNFTMetadata, getListing, parseEther]);
+
+    if (ownerResult) {
+      setCurrentOwner(ownerResult);
+    }
+  }, [tokenId, initialNFTData, getNFTMetadata, getListing, getNFTOwner, parseEther]);
 
   useEffect(() => {
     loadNFTData();
@@ -235,20 +241,21 @@ const NFTDetail = () => {
               industry={nftData.industry}
               description={nftData.description}
             />
+            {currentOwner === address && (
+              <Button onClick={handleClaim}>Claim Revenue</Button>
+            )}
+            {currentOwner !== address && listing && (
+              <BuyPanel
+                price={listing.price}
+                onBuy={handleBuy}
+                onBid={handleBid}
+                currentBid={listing.currentBid}
+                timeRemaining={listing.timeRemaining}
+              />
+            )}
             <CompanyDetails metadata={metadata || initialNFTData} />
           </MainContent>
           <SideContent>
-            <BuyPanel
-              price={listing?.price}
-              isAuction={listing?.isAuction}
-              currentBid={listing?.currentBid}
-              timeRemaining={listing?.timeRemaining}
-              isOwner={owner === address}
-              onBuy={handleBuy}
-              onBid={handleBid}
-              bidAmount={bidAmount}
-              setBidAmount={setBidAmount}
-            />
             <RevenuePanel
               totalRevenue={revenueInfo?.totalRevenue}
               lastPayout={revenueInfo?.lastPayout}
