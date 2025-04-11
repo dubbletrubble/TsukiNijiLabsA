@@ -20,8 +20,7 @@ import CompanyDetails from '../components/nft/CompanyDetails';
  * revenue information, and purchase/bid options.
  */
 
-// Make BigInt available globally
-const BigInt = window.BigInt;
+
 
 const DetailPageContainer = styled.div`
   min-height: calc(100vh - 80px);
@@ -84,7 +83,7 @@ const NFTDetail = () => {
   // Contract hooks
   const { getNFTMetadata, getNFTOwner } = useNFTContract();
   const { getListing, buyNFT, placeBid, cancelListing } = useMarketplace();
-  const { getBalance, approve } = usePlatformToken();
+  const { approve } = usePlatformToken();
   const { getRevenueInfo, claim } = useRevenueRouter();
   
   const [metadata, setMetadata] = useState(() => initialNFTData ? {
@@ -101,7 +100,7 @@ const NFTDetail = () => {
     timeRemaining: initialNFTData.timeRemaining
   } : null);
   const [bidAmount, setBidAmount] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [revenueInfo, setRevenueInfo] = useState(null);
   const [currentOwner, setCurrentOwner] = useState(null);
 
@@ -172,8 +171,6 @@ const NFTDetail = () => {
    * Includes approval and purchase transaction
    */
   const handleBuy = useCallback(async () => {
-    setIsSubmitting(true);
-
     try {
       if (!listing?.price) throw new Error('Invalid listing price');
       
@@ -197,14 +194,11 @@ const NFTDetail = () => {
       navigate('/marketplace');
     } catch (err) {
       console.error(err);
-    } finally {
-      setIsSubmitting(false);
     }
   }, [approve, buyNFT, listing?.price, tokenId, navigate]);
 
   const handleBid = useCallback(async (bidAmount) => {
     try {
-      setIsSubmitting(true);
       await placeBid({
         args: [tokenId, parseEther(bidAmount)]
       });
@@ -212,18 +206,10 @@ const NFTDetail = () => {
       console.log('Bid placed successfully');
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
   }, [placeBid, tokenId, setBidAmount]);
 
-  const handleCancel = useCallback(async () => {
-    await cancelListing({
-      address: contractAddresses.Marketplace,
-      args: [tokenId]
-    });
-    navigate('/marketplace');
-  }, [cancelListing, tokenId, navigate]);
+
 
   const handleClaim = useCallback(async () => {
     await claim({
@@ -275,7 +261,7 @@ const NFTDetail = () => {
         </DetailContainer>
       </Container>
     );
-  }, [metadata, listing, currentOwner, address, revenueInfo, bidAmount, handleBuy, handleBid, handleClaim]);
+  }, [metadata, listing, currentOwner, address, revenueInfo, handleBuy, handleBid, handleClaim]);
 
   return (
     <DetailPageContainer>
