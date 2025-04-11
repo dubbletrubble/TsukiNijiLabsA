@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { Button, Heading, Text } from '../components/common/StyledComponents';
+import { Heading, Text } from '../components/common/StyledComponents';
 import { theme } from '../styles/theme';
 
 const DocContainer = styled.div`

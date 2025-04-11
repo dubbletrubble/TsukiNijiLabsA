@@ -102,8 +102,7 @@ const NFTDetail = () => {
   } : null);
   const [owner] = useState(null);
   const [bidAmount, setBidAmount] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [revenueInfo, setRevenueInfo] = useState(null);
 
   const nftData = useMemo(() => {
@@ -161,8 +160,7 @@ const NFTDetail = () => {
    * Includes approval and purchase transaction
    */
   const handleBuy = useCallback(async () => {
-    setError('');
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       if (!listing?.price) throw new Error('Invalid listing price');
@@ -186,9 +184,9 @@ const NFTDetail = () => {
 
       navigate('/marketplace');
     } catch (err) {
-      setError(err.message);
+      console.error(err);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   }, [approve, buyNFT, listing?.price, tokenId, navigate]);
 
@@ -197,8 +195,9 @@ const NFTDetail = () => {
       await placeBid({
         args: [tokenId, parseEther(bidAmount)]
       });
+      console.log('Bid placed successfully');
     } catch (error) {
-      setError(error.message);
+      console.error(error);
     }
   }, [placeBid, tokenId, parseEther]);
 

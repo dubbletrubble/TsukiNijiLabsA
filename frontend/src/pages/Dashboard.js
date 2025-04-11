@@ -69,7 +69,7 @@ const Dashboard = () => {
       console.error('Error fetching NFTs:', error);
       addAlert('error', 'Failed to load NFTs. Please try again.');
     }
-  }, [address, getOwnedNFTs, getMetadata, getListing, getRevenueAvailable]);
+  }, [address, getOwnedNFTs, getMetadata, getListing, getRevenueAvailable, addAlert]);
 
   // Fetch exchange rate
   const fetchExchangeRate = useCallback(async () => {
