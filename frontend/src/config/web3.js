@@ -1,8 +1,9 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { mainnet, sepolia } from 'viem/chains';
-import { http, createConfig } from 'viem';
-import { infuraProvider } from '@wagmi/core/providers/infura';
+import { getDefaultWallets, connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { configureChains, createConfig } from 'wagmi';
+import { mainnet, sepolia } from 'wagmi/chains';
+import { infuraProvider } from 'wagmi/providers/infura';
+import { publicProvider } from 'wagmi/providers/public';
 
 // Network configuration with fallback to Sepolia testnet
 const NETWORK = process.env.REACT_APP_NETWORK || 'sepolia';
@@ -15,13 +16,24 @@ const projectId = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || DEFAULT_PRO
 // Configure wagmi client with RainbowKit
 const infuraId = process.env.REACT_APP_INFURA_ID || '5b348ac26e3143738765417436a14224';
 
-const wagmiConfig = getDefaultConfig({
+const { chains, publicClient } = configureChains(
+  [selectedChain],
+  [
+    infuraProvider({ apiKey: infuraId }),
+    publicProvider()
+  ]
+);
+
+const { connectors } = getDefaultWallets({
   appName: 'Tsuki Niji Labs NFT Platform',
   projectId,
-  chains: [selectedChain],
-  transports: {
-    [selectedChain.id]: http(`https://${NETWORK}.infura.io/v3/${infuraId}`)
-  }
+  chains
+});
+
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient
 });
 
 // Contract addresses with fallback to zero address
@@ -33,8 +45,5 @@ const contractAddresses = {
   RevenueRouter: process.env.REACT_APP_REVENUE_ROUTER_ADDRESS || ZERO_ADDRESS,
   AdminControls: process.env.REACT_APP_ADMIN_CONTROLS_ADDRESS || ZERO_ADDRESS
 };
-
-// Export configurations
-const chains = [selectedChain];
 
 export { wagmiConfig, contractAddresses, chains };
