@@ -82,7 +82,7 @@ const NFTDetail = () => {
   
   // Contract hooks
   const { getNFTMetadata, getNFTOwner } = useNFTContract();
-  const { getListing, buyNFT, placeBid, cancelListing } = useMarketplace();
+  const { getListing, buyNFT, placeBid } = useMarketplace();
   const { approve } = usePlatformToken();
   const { getRevenueInfo, claim } = useRevenueRouter();
   
@@ -99,7 +99,7 @@ const NFTDetail = () => {
     currentBid: initialNFTData.currentBid ? parseEther(initialNFTData.currentBid) : 0n,
     timeRemaining: initialNFTData.timeRemaining
   } : null);
-  const [bidAmount, setBidAmount] = useState('');
+
 
   const [revenueInfo, setRevenueInfo] = useState(null);
   const [currentOwner, setCurrentOwner] = useState(null);
@@ -160,7 +160,7 @@ const NFTDetail = () => {
     if (ownerResult) {
       setCurrentOwner(ownerResult);
     }
-  }, [tokenId, initialNFTData, getNFTMetadata, getListing, getNFTOwner, parseEther]);
+  }, [tokenId, initialNFTData, getNFTMetadata, getListing, getNFTOwner]);
 
   useEffect(() => {
     loadNFTData();
@@ -196,6 +196,8 @@ const NFTDetail = () => {
       console.error(err);
     }
   }, [approve, buyNFT, listing?.price, tokenId, navigate]);
+
+  const [bidAmount, setBidAmount] = useState('');
 
   const handleBid = useCallback(async (bidAmount) => {
     try {
