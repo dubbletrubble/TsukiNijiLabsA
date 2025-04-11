@@ -68,7 +68,6 @@ const CompanyDetails = ({ metadata }) => {
   const {
     description,
     website,
-    industry,
     tags = [],
     documents = []
   } = metadata;

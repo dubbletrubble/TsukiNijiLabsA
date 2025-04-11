@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { formatEther, parseEther } from 'viem';
+import { formatEther } from 'ethers';
 import { AnimatePresence } from 'framer-motion';
 import { useNFTContract, useMarketplace, usePlatformToken } from '../hooks/useNFTContract';
 import { useRevenueRouter } from '../hooks/useRevenueRouter';
@@ -34,7 +34,7 @@ const Dashboard = () => {
 
   // State
   const [ownedNFTs, setOwnedNFTs] = useState([]);
-  const [totalRevenue, setTotalRevenue] = useState(0n);
+  const [totalRevenue] = useState(0);
   const [pendingRevenue, setPendingRevenue] = useState(0n);
   const [exchangeRate, setExchangeRate] = useState(0);
   const [activities, setActivities] = useState([]);

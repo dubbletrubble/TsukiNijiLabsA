@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { Container, Heading, Text, GlassCard, Input } from '../components/common/StyledComponents';
+import { Button, Heading, Text } from '../components/common/StyledComponents';
 import { theme } from '../styles/theme';
 
 const DocContainer = styled.div`
@@ -83,7 +83,7 @@ const MobileSidebar = styled(motion.aside)`
     background: ${theme.colors.background.primary};
     border-radius: 0;
     z-index: 1000;
-    transform: translateX(\${props => props.isOpen ? '0' : '-100%'});
+    transform: translateX(${props => props.isOpen ? '0' : '-100%'});
     transition: transform 0.3s ease;
   }
 `;
@@ -193,7 +193,7 @@ const SearchContainer = styled.div`
   }
 `;
 
-const SearchInput = styled(Input)`
+const SearchInput = styled.input`
   padding-left: 2.5rem;
   transition: all 0.2s ease;
   background: rgba(255, 255, 255, 0.05);
@@ -257,7 +257,6 @@ const Documentation = () => {
 
       sectionElements.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
         if (window.scrollY >= sectionTop - 100) {
           currentSection = section.id;
         }

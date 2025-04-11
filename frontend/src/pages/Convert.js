@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAccount, useBalance, useContractWrite, useWaitForTransaction } from 'wagmi';
+import { useAccount, useBalance, useContractWrite } from 'wagmi';
 import { parseEther } from 'viem';
 import { Container, Button, Heading, Text, GlassCard } from '../components/common/StyledComponents';
 import { theme } from '../styles/theme';

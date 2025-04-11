@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useAccount } from 'wagmi';
-import { parseEther, parseGwei } from 'viem';
+import { parseEther } from 'viem';
 import { Container } from '../components/common/StyledComponents';
 import { theme } from '../styles/theme';
 import { useNFTContract, useMarketplace, usePlatformToken } from '../hooks/useNFTContract';
@@ -12,7 +12,7 @@ import CompanyOverview from '../components/nft/CompanyOverview';
 import RevenuePanel from '../components/nft/RevenuePanel';
 import BuyPanel from '../components/nft/BuyPanel';
 import CompanyDetails from '../components/nft/CompanyDetails';
-import ErrorBoundary from '../components/common/ErrorBoundary';
+
 
 /**
  * @fileoverview NFT Detail page component
@@ -100,14 +100,17 @@ const NFTDetail = () => {
     currentBid: initialNFTData.currentBid ? parseEther(initialNFTData.currentBid) : 0n,
     timeRemaining: initialNFTData.timeRemaining
   } : null);
-  const [owner, setOwner] = useState(null);
-  const [balance, setBalance] = useState(0n);
-  const [revenueInfo, setRevenueInfo] = useState(null);
+  const [owner] = useState(null);
   const [bidAmount, setBidAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-
+  const nftData = useMemo(() => {
+    return {
+      ...initialNFTData,
+      metadata: metadata || {}
+    };
+  }, [metadata, initialNFTData]);
 
   /**
    * Load NFT data
@@ -188,24 +191,15 @@ const NFTDetail = () => {
     }
   }, [approve, buyNFT, listing?.price, tokenId, navigate]);
 
-  /**
-   * Handles placing a bid on an NFT
-   * Includes approval and bid transaction
-   */
-  const handleBid = useCallback(async () => {
-    if (!bidAmount) return;
-    const bidAmountBigInt = parseEther(bidAmount);
-
-    await approve({
-      address: contractAddresses.PlatformToken,
-      args: [contractAddresses.Marketplace, bidAmountBigInt]
-    });
-
-    await placeBid({
-      address: contractAddresses.Marketplace,
-      args: [tokenId, bidAmountBigInt]
-    });
-  }, [approve, placeBid, bidAmount, tokenId, parseEther]);
+  const handleBid = useCallback(async (bidAmount) => {
+    try {
+      await placeBid({
+        args: [tokenId, parseEther(bidAmount)]
+      });
+    } catch (error) {
+      setError(error.message);
+    }
+  }, [placeBid, tokenId, parseEther]);
 
   const handleCancel = useCallback(async () => {
     await cancelListing({
@@ -225,7 +219,7 @@ const NFTDetail = () => {
       address: contractAddresses.Marketplace,
       args: [tokenId]
     });
-    setRevenueInfo(newRevenueInfo);
+    // setRevenueInfo(newRevenueInfo);
   }, [claim, getRevenueInfo, tokenId]);
 
   // Render content
@@ -237,10 +231,10 @@ const NFTDetail = () => {
         <DetailContainer>
           <MainContent>
             <CompanyOverview
-              name={metadata?.name || initialNFTData?.name}
-              image={metadata?.image || initialNFTData?.image}
-              industry={metadata?.industry || initialNFTData?.industry}
-              description={metadata?.description || initialNFTData?.description}
+              name={nftData.name}
+              image={nftData.image}
+              industry={nftData.industry}
+              description={nftData.description}
             />
             <CompanyDetails metadata={metadata || initialNFTData} />
           </MainContent>

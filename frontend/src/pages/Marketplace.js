@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+
 import { Container, Heading, Text, Button, Grid } from '../components/common/StyledComponents';
 import NFTCard from '../components/marketplace/NFTCard';
 import FilterSidebar from '../components/marketplace/FilterSidebar';
