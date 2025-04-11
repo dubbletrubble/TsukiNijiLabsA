@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { formatEther } from 'ethers';
+import { formatEther } from 'viem';
 import { AnimatePresence } from 'framer-motion';
 import { useNFTContract, useMarketplace, usePlatformToken } from '../hooks/useNFTContract';
 import { useRevenueRouter } from '../hooks/useRevenueRouter';
