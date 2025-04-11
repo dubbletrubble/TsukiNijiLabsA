@@ -263,7 +263,7 @@ const NFTDetail = () => {
         </DetailContainer>
       </Container>
     );
-  }, [metadata, listing, currentOwner, address, revenueInfo, handleBuy, handleBid, handleClaim]);
+  }, [metadata, listing, currentOwner, address, revenueInfo, handleBuy, handleBid, handleClaim, nftData]);
 
   return (
     <DetailPageContainer>
