@@ -5,7 +5,7 @@
  * @module hooks/useNFTContract
  */
 
-import { useContractRead, useContractWrite, useContractEvent } from 'wagmi';
+import { useReadContract, useWriteContract, useWatchContractEvent } from 'wagmi';
 import { contractAddresses } from '../config/web3';
 
 // Import ABIs from contracts
@@ -23,13 +23,13 @@ import PlatformTokenABI from '../abis/PlatformTokenABI.json';
  * @property {Function} getNFTOwner - Function to get NFT owner address
  */
 export const useNFTContract = (tokenId) => {
-  const { data: totalSupply } = useContractRead({
+  const { data: totalSupply } = useReadContract({
     address: contractAddresses.CompanyNFT,
     abi: CompanyNFTABI,
     functionName: 'totalSupply'
   });
 
-  const { data: tokenURI } = useContractRead({
+  const { data: tokenURI } = useReadContract({
     address: contractAddresses.CompanyNFT,
     abi: CompanyNFTABI,
     functionName: 'tokenURI',
@@ -45,7 +45,7 @@ export const useNFTContract = (tokenId) => {
     return metadata;
   };
 
-  const { data: owner } = useContractRead({
+  const { data: owner } = useReadContract({
     address: contractAddresses.CompanyNFT,
     abi: CompanyNFTABI,
     functionName: 'ownerOf',
@@ -75,7 +75,7 @@ export const useNFTContract = (tokenId) => {
  * @property {Function} cancelListing - Cancel an active listing
  */
 export const useMarketplace = (tokenId) => {
-  const { data: listing } = useContractRead({
+  const { data: listing } = useReadContract({
     address: contractAddresses.Marketplace,
     abi: MarketplaceABI,
     functionName: 'getListing',
@@ -87,7 +87,7 @@ export const useMarketplace = (tokenId) => {
     return listing;
   };
 
-  const { writeContract } = useContractWrite();
+  const { writeContract } = useWriteContract();
 
   const listNFT = async (args) => {
     return await writeContract({
@@ -135,7 +135,7 @@ export const useMarketplace = (tokenId) => {
   };
 
   // Watch for events
-  useContractEvent({
+  useWatchContractEvent({
     address: contractAddresses.Marketplace,
     abi: MarketplaceABI,
     eventName: 'NFTListed',
@@ -144,7 +144,7 @@ export const useMarketplace = (tokenId) => {
     }
   });
 
-  useContractEvent({
+  useWatchContractEvent({
     address: contractAddresses.Marketplace,
     abi: MarketplaceABI,
     eventName: 'NFTSold',
@@ -172,7 +172,7 @@ export const useMarketplace = (tokenId) => {
  * @property {Function} approve - Approve token spending for marketplace
  */
 export const usePlatformToken = (address, owner, spender) => {
-  const { data: balance } = useContractRead({
+  const { data: balance } = useReadContract({
     address: contractAddresses.PlatformToken,
     abi: PlatformTokenABI,
     functionName: 'balanceOf',
@@ -184,7 +184,7 @@ export const usePlatformToken = (address, owner, spender) => {
     return balance;
   };
 
-  const { writeContract } = useContractWrite({
+  const { writeContract } = useWriteContract({
     address: contractAddresses.PlatformToken,
     abi: PlatformTokenABI,
     functionName: 'approve'
@@ -196,7 +196,7 @@ export const usePlatformToken = (address, owner, spender) => {
     });
   };
 
-  const { data: allowance } = useContractRead({
+  const { data: allowance } = useReadContract({
     address: contractAddresses.PlatformToken,
     abi: PlatformTokenABI,
     functionName: 'allowance',

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { theme } from '../../styles/theme';
+import { useAccount, useReadContract } from 'wagmi';
+import { CompanyNFTABI } from '../../abis/CompanyNFTABI';
 
 const Nav = styled.nav`
   position: fixed;
@@ -52,34 +54,19 @@ const NavLink = styled(Link)(props => ({
   }
 }));
 
-const ConnectButton = styled.button`
-  background: ${theme.colors.accent};
-  color: ${theme.colors.text.primary};
-  border: none;
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
-  border-radius: ${theme.borderRadius.md};
-  cursor: pointer;
-  font-weight: 500;
-  transition: opacity 0.2s ease;
-  
-  &:hover {
-    opacity: 0.9;
-  }
-`;
+
 
 const Navigation = () => {
   const location = useLocation();
-  const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
-
-  const handleConnect = () => {
-    if (isConnected) {
-      disconnect();
-    } else {
-      connect({ connector: connectors[0] });
-    }
-  };
+  const { address } = useAccount();
+  
+  const { data: hasAdminRole } = useReadContract({
+    address: process.env.REACT_APP_COMPANY_NFT_ADDRESS,
+    abi: CompanyNFTABI.abi,
+    functionName: 'hasRole',
+    args: ['0x0000000000000000000000000000000000000000000000000000000000000000', address],
+    enabled: !!address
+  });
 
   return (
     <Nav>
@@ -92,9 +79,15 @@ const Navigation = () => {
           >
             Marketplace
           </NavLink>
-          <ConnectButton onClick={handleConnect}>
-            {isConnected ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Connect Wallet'}
-          </ConnectButton>
+          {hasAdminRole && (
+            <NavLink 
+              to="/admin"
+              isactive={(location.pathname === '/admin').toString()}
+            >
+              Admin
+            </NavLink>
+          )}
+          <ConnectButton />
         </Links>
       </Container>
     </Nav>
