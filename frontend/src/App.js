@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ScrollToTop from './components/common/ScrollToTop';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
+import { RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GlobalStyles } from './styles/GlobalStyles';
 import Footer from './components/landing/Footer';
@@ -17,16 +17,17 @@ import Convert from './pages/Convert';
 import Support from './pages/Support';
 import FAQ from './pages/FAQ';
 import Documentation from './pages/Documentation';
-import { wagmiConfig, chains } from './config/web3';
+import AdminPanel from './pages/AdminPanel';
+import { wagmiConfig } from './config/web3';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    <WagmiConfig config={wagmiConfig}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider chains={chains}>
+        <RainbowKitProvider theme={lightTheme()}>
           <Router>
             <ScrollToTop />
             <GlobalStyles />
@@ -44,6 +45,7 @@ function App() {
                   <Route path="/support" element={<Support />} />
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/docs" element={<Documentation />} />
+                  <Route path="/admin" element={<AdminPanel />} />
                 </Routes>
               </main>
               <Footer />
@@ -51,7 +53,7 @@ function App() {
           </Router>
         </RainbowKitProvider>
       </QueryClientProvider>
-    </WagmiConfig>
+    </WagmiProvider>
   );
 }
 

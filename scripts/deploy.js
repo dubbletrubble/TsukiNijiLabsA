@@ -4,6 +4,9 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with account:", deployer.address);
 
+  // Admin address
+  const ADMIN_ADDRESS = "0x2cda89DC7839a0f1a63ab3a11E154409c2639d1F";
+
   // Deploy MockPriceOracle first
   const MockPriceOracle = await hre.ethers.getContractFactory("MockPriceOracle");
   const mockPriceOracle = await MockPriceOracle.deploy();
@@ -44,11 +47,17 @@ async function main() {
   await marketplace.waitForDeployment();
   console.log("Marketplace deployed to:", await marketplace.getAddress());
 
-  // Update .env file with contract addresses
+  // Grant admin role to the specified address
+  const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
+  await companyNFT.grantRole(DEFAULT_ADMIN_ROLE, ADMIN_ADDRESS);
+  console.log("Admin role granted to:", ADMIN_ADDRESS);
+
+  // Update .env.sepolia file with contract addresses
   const fs = require('fs');
-  const envFile = '.env';
-  const envContent = `# Network Configuration
-REACT_APP_NETWORK_URL=http://127.0.0.1:8545
+  const envFile = 'frontend/.env.sepolia';
+  const envContent = `REACT_APP_NETWORK=sepolia
+REACT_APP_INFURA_ID=5b348ac26e3143738765417436a14224
+REACT_APP_WALLET_CONNECT_PROJECT_ID=00000000000000000000000000000000
 
 # Contract Addresses
 REACT_APP_COMPANY_NFT_ADDRESS=${await companyNFT.getAddress()}
@@ -56,10 +65,8 @@ REACT_APP_MARKETPLACE_ADDRESS=${await marketplace.getAddress()}
 REACT_APP_PLATFORM_TOKEN_ADDRESS=${await platformToken.getAddress()}
 REACT_APP_REVENUE_ROUTER_ADDRESS=${await revenueRouter.getAddress()}
 
-# API Keys
-REACT_APP_WALLET_CONNECT_PROJECT_ID=YOUR_WALLET_CONNECT_PROJECT_ID
-REACT_APP_ALCHEMY_API_KEY=YOUR_ALCHEMY_API_KEY
-`;
+# Optional: Analytics and monitoring
+REACT_APP_ENABLE_ANALYTICS=false`;
 
   fs.writeFileSync(envFile, envContent);
   console.log("Environment file updated with contract addresses");

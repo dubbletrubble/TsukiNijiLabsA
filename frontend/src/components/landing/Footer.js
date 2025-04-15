@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { Container, Text, Flex } from '../common/StyledComponents';
+import AdminFooterLink from './AdminFooterLink';
 import { theme } from '../../styles/theme';
 
 const FooterSection = styled.footer`
@@ -127,6 +128,9 @@ const Footer = () => {
               All rights reserved
             </Text>
           </Flex>
+          <div style={{ textAlign: 'center', marginTop: theme.spacing.md }}>
+            <AdminFooterLink />
+          </div>
         </BottomBar>
       </Container>
     </FooterSection>

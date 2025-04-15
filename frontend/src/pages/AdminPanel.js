@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CompanyNFTABI from '../abis/CompanyNFTABI.json';
-import MarketplaceABI from '../abis/MarketplaceABI.json';
-import { useAccount } from 'wagmi';
-import { ethers } from 'ethers';
+import { useAccount, useReadContract } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
 import { AdminContainer, AdminPanel as StyledAdminPanel, AdminAlert } from '../components/admin/AdminStyles';
 import AdminRolePanel from '../components/admin/AdminRolePanel';
@@ -11,59 +8,37 @@ import PlatformSettingsPanel from '../components/admin/PlatformSettingsPanel';
 import ContractControlPanel from '../components/admin/ContractControlPanel';
 import MultiSigPanel from '../components/admin/MultiSigPanel';
 import AdminActivityLog from '../components/admin/AdminActivityLog';
+import { contractAddresses } from '../config/web3';
+import CompanyNFTABI from '../abis/CompanyNFTABI.json';
+
+// Hardcoded admin wallet for testing on Sepolia
+const ADMIN_WALLET = '0x2cda89DC7839a0f1a63ab3a11E154409c2639d1F'.toLowerCase();
 
 function AdminPanel() {
   const { address } = useAccount();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [contracts, setContracts] = useState({});
+
+
+  const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
+  
+  const { data: hasAdminRole, isLoading: roleCheckLoading } = useReadContract({
+    address: contractAddresses.CompanyNFT,
+    abi: CompanyNFTABI,
+    functionName: 'hasRole',
+    args: [DEFAULT_ADMIN_ROLE, address],
+    enabled: !!address
+  });
 
   useEffect(() => {
-    checkAdminStatus();
-  }, [address]);
-
-  const checkAdminStatus = async () => {
-    if (!address || !window.ethereum) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      // Initialize contracts
-      const companyNFT = new ethers.Contract(
-        process.env.REACT_APP_COMPANY_NFT_ADDRESS,
-        CompanyNFTABI,
-        signer
-      );
-
-      const marketplace = new ethers.Contract(
-        process.env.REACT_APP_MARKETPLACE_ADDRESS,
-        MarketplaceABI,
-        signer
-      );
-
-      const revenueRouter = new ethers.Contract(
-        process.env.REACT_APP_REVENUE_ROUTER_ADDRESS,
-        RevenueRouterABI,
-        signer
-      );
-
-      setContracts({ companyNFT, marketplace, revenueRouter });
-
-      // Check admin role
-      const DEFAULT_ADMIN_ROLE = ethers.constants.HashZero;
-      const hasAdminRole = await companyNFT.hasRole(DEFAULT_ADMIN_ROLE, address);
-      setIsAdmin(hasAdminRole);
-    } catch (error) {
-      console.error("Error checking admin status:", error);
-    } finally {
+    if (!roleCheckLoading) {
+      // Check if the connected address is the admin wallet OR has admin role in the contract
+      const isHardcodedAdmin = address && address.toLowerCase() === ADMIN_WALLET;
+      setIsAdmin(isHardcodedAdmin || !!hasAdminRole);
       setLoading(false);
     }
-  };
+  }, [hasAdminRole, roleCheckLoading, address]);
 
   if (loading) {
     return (
@@ -112,17 +87,17 @@ function AdminPanel() {
           ⚠️ You are in Admin Mode - All actions require wallet signatures and may need multi-sig approval
         </AdminAlert>
 
-        <AdminRolePanel contracts={contracts} />
+        <AdminRolePanel />
         
-        <NFTMintingPanel contracts={contracts} />
+        <NFTMintingPanel />
         
-        <PlatformSettingsPanel contracts={contracts} />
+        <PlatformSettingsPanel />
         
-        <ContractControlPanel contracts={contracts} />
+        <ContractControlPanel />
         
-        <MultiSigPanel contracts={contracts} />
+        <MultiSigPanel />
         
-        <AdminActivityLog contracts={contracts} />
+        <AdminActivityLog />
       </StyledAdminPanel>
     </AdminContainer>
   );
