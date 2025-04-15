@@ -71,8 +71,37 @@ class ErrorBoundary extends React.Component {
       errorInfo: errorInfo
     });
     
-    // Log the error to an error reporting service
-    console.error('Error caught by boundary:', error, errorInfo);
+    // Enhanced error logging with context information
+    console.error('%c Error caught by ErrorBoundary:', 'background: #FF0000; color: white; padding: 2px 5px; border-radius: 3px;');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
+    
+    // Log browser and environment information to help with debugging
+    console.info('%c Environment Debug Info:', 'background: #4B0082; color: white; padding: 2px 5px; border-radius: 3px;');
+    console.info('User Agent:', navigator.userAgent);
+    console.info('React Version:', React.version);
+    console.info('Window URL:', window.location.href);
+    
+    // Check if error is related to wallet connection
+    const isWalletError = 
+      error.message?.includes('wallet') || 
+      error.message?.includes('provider') || 
+      error.message?.includes('ethereum') || 
+      error.message?.includes('MetaMask') ||
+      errorInfo.componentStack?.includes('ConnectButton');
+      
+    if (isWalletError) {
+      console.warn('%c Wallet Connection Error Detected:', 'background: #FFA500; color: black; padding: 2px 5px; border-radius: 3px;');
+      console.warn('This appears to be a wallet connection issue. Check that MetaMask is installed and accessible.');
+      
+      // Check if window.ethereum exists
+      if (window.ethereum) {
+        console.info('MetaMask is installed. Provider details:', window.ethereum);
+      } else {
+        console.error('MetaMask provider not found in window.ethereum');
+      }
+    }
   }
 
   handleRetry = () => {
@@ -84,7 +113,18 @@ class ErrorBoundary extends React.Component {
   };
 
   render() {
+    const { FallbackComponent } = this.props;
+    
     if (this.state.hasError) {
+      // If a custom fallback component is provided, use it
+      if (FallbackComponent) {
+        return <FallbackComponent 
+          error={this.state.error} 
+          resetErrorBoundary={this.handleRetry} 
+        />;
+      }
+      
+      // Otherwise use the default error UI
       return (
         <ErrorContainer>
           <ErrorHeading>Something went wrong</ErrorHeading>
