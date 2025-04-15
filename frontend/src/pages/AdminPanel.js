@@ -23,22 +23,33 @@ function AdminPanel() {
 
   const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
   
+  // Safely check if CompanyNFTABI is properly structured
+  const safeABI = CompanyNFTABI && CompanyNFTABI.abi ? CompanyNFTABI.abi : [];
+  const validABI = Array.isArray(safeABI) && safeABI.length > 0;
+
+  // For Sepolia testing, also check direct wallet match
+  const isAdminWallet = address && address.toLowerCase() === ADMIN_WALLET;
+
+  // Only attempt contract call if we have a valid ABI
   const { data: hasAdminRole, isLoading: roleCheckLoading } = useReadContract({
     address: contractAddresses.CompanyNFT,
-    abi: CompanyNFTABI,
+    abi: safeABI,
     functionName: 'hasRole',
-    args: [DEFAULT_ADMIN_ROLE, address],
-    enabled: !!address
+    args: [DEFAULT_ADMIN_ROLE, address || '0x0000000000000000000000000000000000000000'],
+    enabled: !!address && validABI
   });
 
   useEffect(() => {
-    if (!roleCheckLoading) {
-      // Check if the connected address is the admin wallet OR has admin role in the contract
-      const isHardcodedAdmin = address && address.toLowerCase() === ADMIN_WALLET;
-      setIsAdmin(isHardcodedAdmin || !!hasAdminRole);
+    if (!validABI) {
+      // If ABI is invalid, rely solely on direct wallet check
+      setIsAdmin(isAdminWallet);
+      setLoading(false);
+    } else if (!roleCheckLoading) {
+      // If ABI is valid and contract check is done, use both methods
+      setIsAdmin(isAdminWallet || !!hasAdminRole);
       setLoading(false);
     }
-  }, [hasAdminRole, roleCheckLoading, address]);
+  }, [hasAdminRole, roleCheckLoading, address, isAdminWallet, validABI]);
 
   if (loading) {
     return (

@@ -60,12 +60,18 @@ const Navigation = () => {
   const location = useLocation();
   const { address } = useAccount();
   
+  // Check if admin wallet is connected (direct check for Sepolia testing)
+  const isAdminWallet = address && address.toLowerCase() === '0x2cda89DC7839a0f1a63ab3a11E154409c2639d1F'.toLowerCase();
+  
+  // Only attempt contract call if we have a valid ABI and address
+  const safeABI = CompanyNFTABI && CompanyNFTABI.abi && Array.isArray(CompanyNFTABI.abi) && CompanyNFTABI.abi.length > 0 ? CompanyNFTABI.abi : [];
+  
   const { data: hasAdminRole } = useReadContract({
     address: process.env.REACT_APP_COMPANY_NFT_ADDRESS,
-    abi: CompanyNFTABI.abi,
+    abi: safeABI,
     functionName: 'hasRole',
-    args: ['0x0000000000000000000000000000000000000000000000000000000000000000', address],
-    enabled: !!address
+    args: ['0x0000000000000000000000000000000000000000000000000000000000000000', address || '0x0000000000000000000000000000000000000000'],
+    enabled: !!address && safeABI.length > 0
   });
 
   return (
@@ -79,7 +85,7 @@ const Navigation = () => {
           >
             Marketplace
           </NavLink>
-          {hasAdminRole && (
+          {(isAdminWallet || hasAdminRole) && (
             <NavLink 
               to="/admin"
               isactive={(location.pathname === '/admin').toString()}
